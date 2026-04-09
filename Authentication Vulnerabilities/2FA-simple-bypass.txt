@@ -1,0 +1,19 @@
+Lab #6 - 2FA simple bypass
+
+Vulnerability - This lab's two-factor authentication can be bypassed. You have already obtained a valid username and password, but do not have access to the user's 2FA verification code. 
+
+Goal - To solve the lab, access Carlos's account page.
+    Your credentials: wiener:peter
+    Victim's credentials carlos:montoya
+
+Analysis:
+1. Log in with credentials wiener:peter
+=> provide verification code in email
+=> This website is using two-factor authentication
+2. Notice that when we log in, we are in the /login page.
+When we enter username and password => the page is redirected to /login2 (a separate page)
+=> Try make a request to /my-account?id=wiener or / without providing verification code
+=> SUCCESSFULLY 
+=> there is a flaw in the 2FA of this website.
+3. Log in with credentials of the victim's user:  carlos:montoya and make a request to /my-account?id=carlos or /
+=> SUCCESSFULLY
