@@ -1,0 +1,22 @@
+Lab #1 - Limit overrun race conditions
+
+Vulnerability - This lab's purchasing flow contains a race condition that enables you to purchase items for an unintended price.
+
+Goal - To solve the lab, successfully purchase a Lightweight L33t Leather Jacket.
+
+Credentials - wiener:peter
+
+Analysis:
+1. Log in with credential wiener:peter
+
+2. Add a product into cart and add coupon code, then click apply
+=> coupon applied (successfully)
+=> But when we try to apply this coupon again, it causes an error: coupon already applied
+=> Coupon is single-use code
+
+3. Using Burp Repeater to try to send multiple request to apply coupon at the same time
+=> Firstly, create a new tab group and create 40 requests
+=> Then, change Send button to Send Group(Parrallel)
+=> And finally click the button
+=> see that a lot of response which indicates that coupon applied
+=> Try to send Parrallel until succeeding.
