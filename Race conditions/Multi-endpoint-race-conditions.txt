@@ -1,0 +1,9 @@
+Lab #3 - Multi-endpoint race conditions
+
+Vulnerability - This lab's purchasing flow contains a race condition that enables you to purchase items for an unintended price.
+
+Goal - To solve the lab, successfully purchase a Lightweight L33t Leather Jacket.
+
+Credentials - wiener:peter
+
+Analysis:

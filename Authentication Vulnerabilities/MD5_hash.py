@@ -37,4 +37,4 @@ def generate_cookie(input_path: str, ouput_path: str, username: str):
 
 
 if __name__ == "__main__":
-    generate_cookie("password.txt", "stay-logged-in-cookie.txt", "carlos")
+    generate_cookie("input.txt", "output.txt", "carlos")
