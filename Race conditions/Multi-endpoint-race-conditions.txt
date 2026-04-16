@@ -7,3 +7,20 @@ Goal - To solve the lab, successfully purchase a Lightweight L33t Leather Jacket
 Credentials - wiener:peter
 
 Analysis:
+1. Log in with Credentials wiener:peter
+
+2. See that when buying a Gift Card, we can redeem it by using Gift Card Code
+
+3. Notice that the time response of adding to cart and placing order is quite the same, and quite long
+=> about more than 600ms
+=> We group them into a tab group and try send in Sending group(Single connection)
+=> the time respones of them are so different, the first request is much longer than the second one.
+=> Add a request to warm the connection before 2 requests
+
+4. Add a GET request / to this group 
+=> Send them in Sending group(single connection)
+=> The time response of GET request is about 600ms, while the time response of those are quite the same, about 280ms
+=> We can exploit race condition 
+
+5. Send 3 requests in Sending group (paralellel) (single-package attack)
+=> Try this many times until we succeed.
