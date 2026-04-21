@@ -1,0 +1,11 @@
+Lab #2 - Stored XSS into HTML context with nothing encoded
+
+Vulnerability - This lab contains a stored cross-site scripting vulnerability in the comment functionality.
+
+Goal - To solve this lab, submit a comment that calls the alert function when the blog post is viewed.
+
+Analysis:
+1. Post a comment hello, we see that it will be displayed on the page after that.
+2. Post a malicious Javascript:
+<script>alert(1)</script>
+=> SUCCESSFULLY.

