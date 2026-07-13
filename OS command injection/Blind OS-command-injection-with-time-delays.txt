@@ -1,0 +1,20 @@
+Lab: Blind OS command injection with time delays
+
+Vulnerability: This lab contains a blind OS command injection vulnerability in the feedback function.
+The application executes a shell command containing the user-supplied details. The output from the command is not returned in the response.
+
+Goal: To solve the lab, exploit the blind OS command injection vulnerability to cause a 10 second delay.
+
+Analysis:
+1. Send a feedback and analyze request using BurpSuite
+
+2. Try changing message parameter: "+%26+echo+abcde+%26+"
+=> HTTP response do not contain abcde
+
+3. Using time delays technique to explore blind OS command injection 
+=> Try changing message parameter: "+%26+ping+-c+10+127.0.0.1+%26+"
+=> See that about a quite a long time we receive a response 
+=> This website is vulnerable to OS command injection (Blind OS command injection).
+
+
+

