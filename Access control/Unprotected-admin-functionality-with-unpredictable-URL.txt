@@ -1,0 +1,27 @@
+Lab: Unprotected admin functionality with unpredictable URL
+
+Vulnerability: This lab has an unprotected admin panel. It's located at an unpredictable location, but the location is disclosed somewhere in the application.
+
+Goal: Solve the lab by accessing the admin panel, and using it to delete the user carlos.
+
+Analysis and Solution:
+1. Access /admin page and receive an error: "Not Found"
+=> This URL is invalid
+
+2. See JavaScript code in the response of GET / request: 
+var isAdmin = false;
+if (isAdmin) {
+   var topLinksTag = document.getElementsByClassName("top-links")[0];
+   var adminPanelTag = document.createElement('a');
+   adminPanelTag.setAttribute('href', '/admin-13u4io');
+   adminPanelTag.innerText = 'Admin panel';
+   topLinksTag.append(adminPanelTag);
+   var pTag = document.createElement('p');
+   pTag.innerText = '|';
+   topLinksTag.appendChild(pTag);
+}
+
+=> It reveals an URL /admin-13u4io
+
+3. Access /admin-13u4io and delete carlos
+=> SUCCESSFULLY

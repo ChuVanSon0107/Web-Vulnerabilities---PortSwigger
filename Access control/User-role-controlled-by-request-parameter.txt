@@ -1,0 +1,23 @@
+Lab: User role controlled by request parameter
+
+Vulnerability: This lab has an admin panel at /admin, which identifies administrators using a forgeable cookie.
+
+Goal: Solve the lab by accessing the admin panel and using it to delete the user carlos.
+
+Credentials: wiener:peter
+
+Analysis and Solution: 
+1. Log in with credentials wiener:peter
+=> See that in the response, 
+Set-Cookie: Admin=false; Secure; HttpOnly
+Set-Cookie: session=8PJzIuaNFubBIJPFRknhA8iTUmUT8u9v; Secure; HttpOnly; SameSite=None
+
+2. Access /admin and see an error: Admin interface only available if logged in as an administrator
+But in the request GET /admin, see Cookie: Admin=false; session=8PJzIuaNFubBIJPFRknhA8iTUmUT8u9v
+
+3. Using Burp Repeater and try modifying Admin=true and send request
+=> Successfully access /admin page
+=> Server side doesn't validate Cookie, and believe entirely into users
+
+4. Access /admin page and delete carlos
+=> SUCCESSFULLY

