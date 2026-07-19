@@ -1,0 +1,22 @@
+Lab: Inconsistent security controls
+
+Vulnerability: This lab's flawed logic allows arbitrary users to access administrative functionality that should only be available to company employees.
+
+Goal: To solve the lab, access the admin panel and delete the user carlos.
+
+Analysis:
+1. Register an account with email of attacker
+=> See that when register, we have to confirm by access a link sent to this email
+
+2. When log in and access /admin page, see an error: Admin interface only available if logged in as a DontWannaCry user
+
+3. But when we access /my-account, see an update email function and we can update to arbitrary email without having to confirm this updated email
+=> This is an vulnerability
+
+Solution: 
+1. Register a normal account
+
+2. In the /my-account, using update email functionality to update email with domain @dontwannacry.com
+
+3. Access /admin panel and  delete carlos
+=> SUCCESSFULY

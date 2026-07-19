@@ -1,0 +1,35 @@
+Lab: Information disclosure in version control history
+
+Vulnerability: This lab discloses sensitive information via its version control history.
+
+Goal: To solve the lab, obtain the password for the administrator user then log in and delete the user carlos.
+
+Analysis and Solution:
+1. Access /.git page and see response: 
+<branches>	
+description	73B
+<hooks>	
+<info>	
+<refs>	
+HEAD	23B
+config	157B
+<objects>	
+index	225B
+COMMIT_EDITMSG	34B
+<logs>
+
+2. Click into <logs>, then click HEAD and can see commit history: 
+0000000000000000000000000000000000000000 982a470a78467e25d116a8adcab151718e949ec7 Carlos Montoya <carlos@carlos-montoya.net> 1784461054 +0000	commit (initial): Add skeleton admin panel
+982a470a78467e25d116a8adcab151718e949ec7 a4cac45155f7f0fd4be4b0c12eb380c4b8c3178d Carlos Montoya <carlos@carlos-montoya.net> 1784461054 +0000	commit: Remove admin password from config
+=> Now, we try to find commited changes file
+
+3. Click into <objects>, then click into every folder and download files in these folders
+=> to find commited changes
+
+4. Read these files, and see a file contains: ADMIN_PASSWORD=9gtug1bhbj33v8r1jug8
+=> This is the password of administrator
+
+5. Log in with credentials administrator:9gtug1bhbj33v8r1jug8
+=> then click delete carlos
+=> SUCCESSFULLY
+

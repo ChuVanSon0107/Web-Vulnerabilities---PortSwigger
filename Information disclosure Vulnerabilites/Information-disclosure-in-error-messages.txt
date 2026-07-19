@@ -1,0 +1,55 @@
+Lab: Information disclosure in error messages
+
+Vulnerability: This lab's verbose error messages reveal that it is using a vulnerable version of a third-party framework.
+
+Goal: To solve the lab, obtain and submit the version number of this framework.
+
+Analysis and Solution:
+1. Click View Details an item, and see URL: https://0ad900c20416edd080d985e500ea0022.web-security-academy.net/product?productId=1
+
+2. Try removing query paramerter ?productId=1
+=> Error: "Missing parameter: productId"
+
+3. See that productId is interger, so try assign it a string 
+https://0ad900c20416edd080d985e500ea0022.web-security-academy.net/product?productId=abc
+=> See an error which reveals what version it is using
+
+Internal Server Error: java.lang.NumberFormatException: For input string: "a"
+	at java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)
+	at java.base/java.lang.Integer.parseInt(Integer.java:661)
+	at java.base/java.lang.Integer.parseInt(Integer.java:777)
+	at lab.m.d.p.j.h(Unknown Source)
+	at lab.z.h.a.u.b(Unknown Source)
+	at lab.z.h.u.c.u.N(Unknown Source)
+	at lab.z.h.u.a.lambda$handleSubRequest$0(Unknown Source)
+	at r.a.d.k.lambda$null$3(Unknown Source)
+	at r.a.d.k.p(Unknown Source)
+	at r.a.d.k.lambda$uncheckedFunction$4(Unknown Source)
+	at java.base/java.util.Optional.map(Optional.java:260)
+	at lab.z.h.u.a.Q(Unknown Source)
+	at lab.server.q.t.w.y(Unknown Source)
+	at lab.z.h.w.h(Unknown Source)
+	at lab.z.h.w.y(Unknown Source)
+	at lab.server.q.t.b.r.D(Unknown Source)
+	at lab.server.q.t.b.j.lambda$handle$0(Unknown Source)
+	at lab.m.r.j.w.s(Unknown Source)
+	at lab.server.q.t.b.j.Z(Unknown Source)
+	at lab.server.q.t.vz.F(Unknown Source)
+	at r.a.d.k.lambda$null$3(Unknown Source)
+	at r.a.d.k.p(Unknown Source)
+	at r.a.d.k.lambda$uncheckedFunction$4(Unknown Source)
+	at lab.server.t.n(Unknown Source)
+	at lab.server.q.t.vz.Z(Unknown Source)
+	at lab.server.q.v.u.M(Unknown Source)
+	at lab.server.q.f.a(Unknown Source)
+	at lab.server.q.a.a(Unknown Source)
+	at lab.server.x.s(Unknown Source)
+	at lab.server.x.C(Unknown Source)
+	at lab.u.p.lambda$consume$0(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+Apache Struts 2 2.3.31
+
+==> Version: Apache Struts 2 2.3.31

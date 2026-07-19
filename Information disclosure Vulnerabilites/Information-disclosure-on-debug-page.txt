@@ -1,0 +1,16 @@
+Lab: Information disclosure on debug page
+
+Vulnerability: This lab contains a debug page that discloses sensitive information about the application.
+
+Goal: To solve the lab, obtain and submit the SECRET_KEY environment variable.
+
+Analysis and Solution:
+1. Using Burp Suite, inspect the home page and see an HTML comment: 
+                   <!-- <a href=/cgi-bin/phpinfo.php>Debug</a> -->
+
+2. Access this URL: /cgi-bin/phpinfo.php
+=> This is a debug page
+=> Find SECRET_KEY in this page
+
+3. In the Environment table, see SECRET_KEY and submit this ValueError
+=> SUCCESSFULY
