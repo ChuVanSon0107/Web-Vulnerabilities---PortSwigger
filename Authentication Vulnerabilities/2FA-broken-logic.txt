@@ -14,7 +14,7 @@ Analysis:
 => When we submit it, we redirect to /login2
 => See that header contains Cookie: verify=wiener => We can change this value to carlos
 
-2. Change verify=carlos in /login2
+2. Change verify=carlos in /login2 and change Cookie session
 => Try to brute-force verification code
 
 3. Using Turbo Intruder to brute-force verification code
