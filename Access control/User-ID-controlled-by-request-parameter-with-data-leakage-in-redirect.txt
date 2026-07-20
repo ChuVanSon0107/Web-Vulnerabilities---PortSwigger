@@ -1,0 +1,19 @@
+Lab: User ID controlled by request parameter with data leakage in redirect
+
+Vulnerability: This lab contains an access control vulnerability where sensitive information is leaked in the body of a redirect response.
+
+Goal: To solve the lab, obtain the API key for the user carlos and submit it as the solution.
+
+Credentials: wiener:peter
+
+Analysis and Solution:
+1. Log in with credentials wiener:peter
+=> See that this websites access user's account page using direct reference - user ID: /my-account?id=wiener 
+
+2. Try changing to /my-account?id=carlos 
+=> The websites redirect to /login page 
+
+BUT the response of GET /my-account?id=carlos reveals sensitive information before redirecting to /login page 
+=> Read this response and see API key
+=> Submit this API Key 
+=> SUCCESSFULLY

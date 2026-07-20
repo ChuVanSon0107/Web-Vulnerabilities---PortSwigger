@@ -1,0 +1,17 @@
+Lab: User ID controlled by request parameter
+
+Vulnerability: This lab has a horizontal privilege escalation vulnerability on the user account page.
+
+Goal: To solve the lab, obtain the API key for the user carlos and submit it as the solution.
+
+Credentials: wiener:parameter
+
+Analysis and Solution:
+1. Log in with credentials wiener:peter, and see an API Key in account page
+
+Furthermore, this websites access to user's resource through id parameter as a direct reference: 
+/my-account?id=wiener
+
+2. Change id=wiener to id=carlos to access carlos account page: /my-account?id=carlos
+=> SUCCESSFULLY
+=> Submit API Key

